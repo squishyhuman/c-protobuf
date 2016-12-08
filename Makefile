@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -O0 -g3 -Wall
 LFLAGS = 
 DEPS = protobuf.h
-OBJS = testit.o protobuf.o varint.o Test1_protobuf.o Test2_protobuf.o
+OBJS = protobuf.o varint.o
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -10,10 +10,11 @@ OBJS = testit.o protobuf.o varint.o Test1_protobuf.o Test2_protobuf.o
 test_protobuf: $(OBJS)
 	$(CC) -o $@ $^ $(LFLAGS)
 
-all: test_protobuf
-
+all: $(OBJS)
+	cd test; make all;
+	
 clean:
 	rm -f *.o
-	rm -f test_protobuf
+	cd test; make clean;
 	
 rebuild: clean all
