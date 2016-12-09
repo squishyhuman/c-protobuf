@@ -65,7 +65,7 @@ int test_complex_protobuf() {
 		return 0;
 	}
 
-	if (strcmp(results->test2->a, test3->test2->a) == 0) {
+	if (strcmp(results->test2->a, test3->test2->a) != 0) {
 		printf("String a does not match: %s vs %s\n", test3->test2->a, results->test2->a);
 		Test3_free(test3);
 		Test3_free(results);
@@ -142,6 +142,15 @@ int test_write_simple() {
 
 	if (pos0 != 8 || pos1 != 150 || pos2 != 1) {
 		printf("Results not as expected\n");
+		return 0;
+	}
+
+	struct Test1* results;
+	retVal = Test1_protobuf_decode(buffer, bytes_written, &results);
+
+	if (results->a != test1.a) {
+		printf("Incorrect results after decode");
+		Test1_free(results);
 		return 0;
 	}
 

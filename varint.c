@@ -61,6 +61,7 @@ unsigned char* varint_encode(const unsigned long long n, unsigned char* buf, int
  */
 unsigned long long varint_decode(const unsigned char* buf, int len, size_t* bytes) {
   unsigned long long result = 0;
+  if (bytes != NULL) *bytes = 0;
   int bits = 0;
   const unsigned char* ptr = buf;
   unsigned long long ll;

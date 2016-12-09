@@ -33,7 +33,16 @@ int Test3_protobuf_encode(struct Test3* incoming, unsigned char* buffer, size_t 
 	*bytes_written += bytes_used;
 	protobuf_encode_varint(2, Test3_message_fields[1], incoming->an_int, &buffer[*bytes_written], max_buffer_length - *bytes_written, &bytes_used);
 	*bytes_written += bytes_used;
-	return Test2_protobuf_encode(incoming->test2, &buffer[*bytes_written], max_buffer_length - *bytes_written, &bytes_used);
+	// write Test2 to safe area
+	int pos = *bytes_written + 11;
+	size_t test2_size = 0;
+	int retVal = Test2_protobuf_encode(incoming->test2, &buffer[pos], max_buffer_length - pos, &test2_size);
+	protobuf_encode_varint(3, Test3_message_fields[2], test2_size, &buffer[*bytes_written], max_buffer_length - *bytes_written, &bytes_used);
+	*bytes_written += bytes_used;
+	// now move the encoded Test2 to the correct area
+	memcpy(&buffer[*bytes_written], &buffer[pos], test2_size);
+	*bytes_written += test2_size;
+	return retVal;
 }
 
 int Test3_protobuf_decode(unsigned char* buffer, size_t buffer_length, struct Test3** output) {
@@ -59,10 +68,13 @@ int Test3_protobuf_decode(unsigned char* buffer, size_t buffer_length, struct Te
 				(*output)->an_int = varint_decode(&buffer[pos], buffer_length - pos, &bytes_read);
 				pos += bytes_read;
 				break;
-			case(3):
-				Test2_protobuf_decode(&buffer[pos], buffer_length - pos, &((*output)->test2));
+			case(3): {
+				size_t test2_size = varint_decode(&buffer[pos], buffer_length - pos, &bytes_read);
 				pos += bytes_read;
+				Test2_protobuf_decode(&buffer[pos], buffer_length - pos, &((*output)->test2));
+				pos += test2_size;
 				break;
+			}
 		}
 	}
 	return 1;

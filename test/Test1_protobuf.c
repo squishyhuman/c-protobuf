@@ -38,6 +38,7 @@ int Test1_protobuf_decode(unsigned char* buffer, size_t buffer_length, struct Te
 			Test1_free(*output);
 			return 0;
 		}
+		pos += bytes_read;
 		switch (field_no) {
 			case (1):
 				(*output)->a = varint_decode(&buffer[pos], buffer_length - pos, &bytes_read);
