@@ -23,6 +23,7 @@ int protobuf_encode_string(int field_number, enum WireType field_type, const cha
 	unsigned int field_no = field_number << 3;
 	unsigned long long field = field_no | field_type;
 	size_t bytes_processed;
+	*bytes_written = 0;
 	// field type & number
 	varint_encode(field, buffer, max_buffer_length, &bytes_processed);
 	*bytes_written += bytes_processed;

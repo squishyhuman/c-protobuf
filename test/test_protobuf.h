@@ -17,9 +17,64 @@
  * int Test1_protobuf_encode(struct Test1* incoming, unsigned char* buffer, size_t max_buffer_length, size_t* bytes_written);
  * int Test1_protobuf_decode(unsigned char* buffer, size_t buffer_length, struct Test1** output);
  */
+#include <stdlib.h>
+#include <string.h>
 
+#include "Test3_protobuf.h"
 #include "Test1_protobuf.h"
 #include "Test2_protobuf.h"
+
+int test_complex_protobuf() {
+	int buffer_length = 255;
+	size_t bytes_used = 0;
+	unsigned char buffer[buffer_length];
+
+	// build the objects
+	struct Test2* test2;
+	Test2_new(&test2);
+	struct Test3* test3;
+	Test3_new(&test3);
+	test3->test2 = test2;
+
+	// set values
+	test3->a_string = malloc(15);
+	strcpy(test3->a_string, "Hello, World!");
+	test3->an_int = 29;
+	test3->test2->a = malloc(10);
+	strcpy(test3->test2->a, "Testing");
+
+	// encode
+	Test3_protobuf_encode(test3, buffer, buffer_length, &bytes_used);
+
+	// decode
+	struct Test3* results;
+	Test3_protobuf_decode(buffer, bytes_used, &results);
+
+	// view results
+	if (strcmp(results->a_string, test3->a_string) != 0) {
+		printf("String a does not match: %s vs %s\n", test3->a_string, results->a_string);
+		Test3_free(test3);
+		Test3_free(results);
+		return 0;
+	}
+
+	if (results->an_int != test3->an_int) {
+		printf("Integers do not match: %d vs %d\n", test3->an_int, results->an_int);
+		Test3_free(test3);
+		Test3_free(results);
+		return 0;
+	}
+
+	if (strcmp(results->test2->a, test3->test2->a) == 0) {
+		printf("String a does not match: %s vs %s\n", test3->test2->a, results->test2->a);
+		Test3_free(test3);
+		Test3_free(results);
+		return 0;
+	}
+
+	return 1;
+
+}
 
 int test_rightshift() {
 	struct Test1 test1;

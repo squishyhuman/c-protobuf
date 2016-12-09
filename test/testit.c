@@ -19,6 +19,7 @@ const char* names[] = {
 		"test_write_negative",
 		"test_write_string",
 		"test_rightshift",
+		"test_complex_protobuf",
 		"test_varint"
 };
 
@@ -27,6 +28,7 @@ int (*funcs[])(void) = {
 		test_write_negative,
 		test_write_string,
 		test_rightshift,
+		test_complex_protobuf,
 		test_varint
 };
 
