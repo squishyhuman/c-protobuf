@@ -13,7 +13,7 @@ int protobuf_encode_length_delimited(int field_number, enum WireType field_type,
 	// push the field number and wire type together
 	unsigned int field_no = field_number << 3;
 	unsigned long long field = field_no | field_type;
-	size_t bytes_processed;
+	size_t bytes_processed = 0;
 	*bytes_written = 0;
 	// field type & number
 	varint_encode(field, buffer, max_buffer_length, &bytes_processed);
@@ -31,18 +31,23 @@ int protobuf_decode_length_delimited(const unsigned char* buffer, size_t buffer_
 	size_t pos = 0;
 	*bytes_read = 0;
 	// grab the field size
-	*results_length = varint_decode(&buffer[pos], buffer_length - pos, bytes_read);
+	size_t field_size = varint_decode(&buffer[pos], buffer_length - pos, bytes_read);
 	pos += *bytes_read;
 
 	// allocate memory
-	*results = malloc(sizeof(char) * (*results_length));
+	*results = malloc(sizeof(char) * field_size);
 	if ((*results) == NULL)
 		return 0;
 
+	memset(*results, 0, field_size);
+
 	// copy the bytes
-	memcpy((*results), &buffer[pos], (*results_length));
-	pos += (*results_length);
+	memcpy( *results, &buffer[pos], field_size);
+	pos += field_size;
+
+	// set return values
 	*bytes_read = pos;
+	*results_length = field_size;
 
 	return 1;
 }
@@ -109,6 +114,8 @@ int protobuf_decode_string(const unsigned char* buffer, size_t buffer_length, ch
 	*results = malloc(sizeof(char) * length + 1);
 	if ((*results) == NULL)
 		return 0;
+
+	memset(*results, 0, length+1);
 
 	// copy the string
 	memcpy((*results), &buffer[pos], length);
