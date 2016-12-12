@@ -72,6 +72,8 @@ int test_complex_protobuf() {
 		return 0;
 	}
 
+	Test3_free(test3);
+	Test3_free(results);
 	return 1;
 
 }
@@ -153,6 +155,8 @@ int test_write_simple() {
 		Test1_free(results);
 		return 0;
 	}
+
+	Test1_free(results);
 
 	return 1;
 }
