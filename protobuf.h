@@ -21,6 +21,22 @@ enum WireType {
 };
 
 /***
+ * Encode a length delimited field into the buffer
+ * @param field_number the field number
+ * @param wire_type the wire type
+ * @param incoming the values
+ * @param incoming_length the lenght of incoming
+ * @param buffer the pointer to where to place the encoded value
+ * @param max_buffer_length the buffer length remaining
+ * @param bytes_written the number of bytes written
+ * @returns true(1) on success
+ */
+int protobuf_encode_length_delimited(int field_number, enum WireType wire_type, const char* incoming, size_t incoming_length,
+		unsigned char* buffer, size_t max_buffer_size, size_t* bytes_written);
+
+int protobuf_decode_length_delimited(const unsigned char* buffer, size_t buffer_length, char** results, size_t *results_length, size_t* bytes_read);
+
+/***
  * encode a string into the buffer
  * @param field_number the field number
  * @param incoming the string value
