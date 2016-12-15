@@ -22,8 +22,10 @@ int protobuf_encode_length_delimited(int field_number, enum WireType field_type,
 	varint_encode(incoming_length, &buffer[*bytes_written], max_buffer_length - *bytes_written, &bytes_processed);
 	*bytes_written += bytes_processed;
 	// field value
-	memcpy(&buffer[*bytes_written], incoming, incoming_length);
-	*bytes_written += incoming_length;
+	if (incoming_length > 0) {
+		memcpy(&buffer[*bytes_written], incoming, incoming_length);
+		*bytes_written += incoming_length;
+	}
 	return 1;
 }
 
