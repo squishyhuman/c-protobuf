@@ -71,6 +71,8 @@ int protobuf_decode_string(const unsigned char* buffer, size_t buffer_length, ch
 int protobuf_encode_varint(int field_number, enum WireType field_type, unsigned long long incoming, unsigned char* buffer,
 		size_t max_buffer_length, size_t* bytes_written);
 
+int protobuf_decode_varint(const unsigned char* buffer, size_t buffer_length, unsigned long long* results, size_t* bytes_read);
+
 /***
  * retrieve field number and field type from current buffer at position 0
  * @param buffer the incoming buffer

@@ -97,6 +97,11 @@ int protobuf_encode_varint(int field_number, enum WireType field_type, unsigned 
 
 }
 
+int protobuf_decode_varint(const unsigned char* buffer, size_t buffer_length, unsigned long long* results, size_t* bytes_read) {
+	*results = varint_decode(buffer, buffer_length, bytes_read);
+	return 1;
+}
+
 /**
  * Pull a string from the protobuf buffer
  * @param the buffer, positioned at the field size
