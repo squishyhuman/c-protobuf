@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
 				unsigned long long varint = 0;
 				protobuf_decode_varint(&buffer[pos], numBytes-pos, &varint, &bytes_read);
 				pos += bytes_read;
-				printf(" Value: %llu\n", varint);
+				printf(" Value: %llu. Next read position at %lu\n", varint, pos);
 				break;
 			}
 			case (WIRETYPE_LENGTH_DELIMITED): {
