@@ -146,7 +146,7 @@ int protobuf_decode_field_and_type(const unsigned char* buffer, int buffer_lengt
 	*bytes_read = 0;
 	unsigned long long field = varint_decode(buffer, buffer_length, bytes_read);
 	*field_no = field >> 3;
-	*field_type = field & *field_no;
+	*field_type = field - (*field_no << 3);
 	return 1;
 }
 
