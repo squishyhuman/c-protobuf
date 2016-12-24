@@ -116,21 +116,21 @@ int protobuf_decode_string(const unsigned char* buffer, size_t buffer_length, ch
 	// grab the field size
 	int length = varint_decode(&buffer[pos], buffer_length - pos, bytes_read);
 	pos += *bytes_read;
+	*bytes_read += length;
 
-	// allocate memory
-	*results = malloc(sizeof(char) * length + 1);
-	if ((*results) == NULL)
-		return 0;
+	// allocate memory (if neccesary)
+	if (length > 0) {
+		*results = malloc(sizeof(char) * length + 1);
+		if ((*results) == NULL)
+			return 0;
 
-	memset(*results, 0, length+1);
+		memset(*results, 0, length+1);
 
-	// copy the string
-	memcpy((*results), &buffer[pos], length);
-	// don't forget the null
-	(*results)[length] = 0;
-	pos += length;
-	*bytes_read = pos;
-
+		// copy the string
+		memcpy((*results), &buffer[pos], length);
+		// don't forget the null
+		(*results)[length] = 0;
+	}
 	return 1;
 }
 
